@@ -13,6 +13,7 @@ class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
   end
 
   def decode(data)
+    puts "Got data to decode: #{data.inspect}"
     event = Logfmt.parse(data)
     if !event['level'].is_a?(String) || event['level'].empty?
       event = { '_logfmtparsefailure' => true }
