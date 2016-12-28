@@ -8,10 +8,11 @@ class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
   config_name 'logfmt'
 
   def register
+    logger.info 'Logfmt codec regidtered'
   end
 
   def decode(data)
-    puts "Got data to decode: #{data.inspect}"
+    logger.info "Got data to decode: #{data.inspect}"
     event = Logfmt.parse(data)
     if !event['level'].is_a?(String) || event['level'].empty?
       event = { 'tags' => ['_logfmtparsefailure'] }
@@ -25,5 +26,7 @@ class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
     end
     event['message'] = data
     yield LogStash::Event.new(event)
+  rescue => e
+    logger.error(e)
   end # def decode
 end # class LogStash::Codecs::Logfmt
