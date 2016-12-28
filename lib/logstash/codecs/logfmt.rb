@@ -7,8 +7,6 @@ require 'logfmt'
 class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
   config_name 'logfmt'
 
-  config :charset, validate: ::Encoding.name_list, default: 'UTF-8'
-
   def register
   end
 
@@ -16,7 +14,14 @@ class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
     puts "Got data to decode: #{data.inspect}"
     event = Logfmt.parse(data)
     if !event['level'].is_a?(String) || event['level'].empty?
-      event = { '_logfmtparsefailure' => true }
+      event = { 'tags' => ['_logfmtparsefailure'] }
+    end
+    if event['stacktrace']
+      if event['stacktrace'].start_with?('[')
+        event['stacktrace'] = event['stacktrace'][1..-2].split('][')
+      else
+        event['stacktrace'] = event['stacktrace'].split(',')
+      end
     end
     event['message'] = data
     yield LogStash::Event.new(event)
