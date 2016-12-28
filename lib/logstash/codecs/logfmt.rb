@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'logstash/codecs/base'
+require 'logstash/util/charset'
 require 'logstash/event'
 require 'logfmt'
 
@@ -7,12 +8,17 @@ require 'logfmt'
 class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
   config_name 'logfmt'
 
+  config :charset, validate: ::Encoding.name_list, default: 'UTF-8'
+
   def register
-    logger.info 'Logfmt codec regidtered'
+    @converter = LogStash::Util::Charset.new(@charset)
+    @converter.logger = @logger
+    @logger.info 'Logfmt codec regidtered'
   end
 
   def decode(data)
-    logger.info "Got data to decode: #{data.inspect}"
+    @logger.info "Got data to decode: #{data.inspect}"
+    data = @converter.convert(data)
     event = Logfmt.parse(data)
     if !event['level'].is_a?(String) || event['level'].empty?
       event = { 'tags' => ['_logfmtparsefailure'] }
