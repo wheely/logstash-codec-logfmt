@@ -1,7 +1,6 @@
 # encoding: utf-8
 require 'logstash/filters/base'
-require 'logstash/util/charset'
-require 'logstash/event'
+require 'logstash/namespace'
 require 'logfmt'
 
 # Add any asciidoc formatted documentation here
