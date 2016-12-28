@@ -12,7 +12,7 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
   config :source, validate: :string
 
   # The target field to place all the data
-  config :target, validate: :string, default: 'log'
+  config :target, validate: :string, default: 'logfmt'
 
   def register
     @logger.info 'Logfmt filter registered'
@@ -38,5 +38,6 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
       end
     end
     event.set(@target, params)
+    true
   end
 end # class LogStash::Filters::Logfmt

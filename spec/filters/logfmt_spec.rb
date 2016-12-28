@@ -1,5 +1,5 @@
 require 'logstash/devutils/rspec/spec_helper'
-require 'logstash/codecs/logfmt'
+require 'logstash/filters/logfmt'
 require 'logstash/event'
 require 'logstash/json'
 require 'insist'
