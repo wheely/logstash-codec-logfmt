@@ -1,32 +1,23 @@
 # encoding: utf-8
 require 'logstash/codecs/base'
+require 'logstash/event'
 require 'logfmt'
+
 # Add any asciidoc formatted documentation here
 class LogStash::Codecs::Logfmt < LogStash::Codecs::Base
-  # This example codec will append a string to the message field
-  # of an event, either in the decoding or encoding methods
-  #
-  # This is only intended to be used as an example.
-  #
-  # input {
-  #   stdin { codec => example }
-  # }
-  #
-  # or
-  #
-  # output {
-  #   stdout { codec => example }
-  # }
   config_name 'logfmt'
 
-  # Append a string to the message
-  # config :append, :validate => :string, :default => ', Hello World!'
+  config :charset, validate: ::Encoding.name_list, default: 'UTF-8'
 
   def register
   end
 
   def decode(data)
-    parsed = Logfmt.parse(data)
-    yield LogStash::Event.new(parsed)
+    event = Logfmt.parse(data)
+    if !event['level'].is_a?(String) || event['level'].empty?
+      event = { '_logfmtparsefailure' => true }
+    end
+    event['message'] = data
+    yield LogStash::Event.new(event)
   end # def decode
 end # class LogStash::Codecs::Logfmt
