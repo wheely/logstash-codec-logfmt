@@ -4,11 +4,11 @@ else
   # see https://github.com/cyberdelia/logfmt-ruby/pull/9
   module Logfmt
     def self.numeric?(s)
-      s.match(/\A[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\Z/)
+      s.is_a?(Numeric) || s.to_s.match(/\A[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\Z/)
     end
 
     def self.integer?(s)
-      s.match(/\A[-+]?[0-9]+\Z/)
+      s.is_a?(Integer) || s.to_s.match(/\A[-+]?[0-9]+\Z/)
     end
 
     def self.parse(line)
@@ -53,9 +53,9 @@ else
           end
           if i >= line.length
             if integer?(value)
-              value = Integer(value)
+              value = value.to_i
             elsif numeric?(value)
-              value = Float(value)
+              value = value.to_f
             end
             output[key.strip] = value || true
           end
@@ -64,9 +64,9 @@ else
         if state == IVALUE
           if !(c > ' ' && c != '"' && c != '=')
             if integer?(value)
-              value = Integer(value)
+              value = value.to_i
             elsif numeric?(value)
-              value = Float(value)
+              value = value.to_f
             end
             output[key.strip] = value
             state = GARBAGE
@@ -75,9 +75,9 @@ else
           end
           if i >= line.length
             if integer?(value)
-              value = Integer(value)
+              value = value.to_i
             elsif numeric?(value)
-              value = Float(value)
+              value = value.to_f
             end
             output[key.strip] = value
           end
