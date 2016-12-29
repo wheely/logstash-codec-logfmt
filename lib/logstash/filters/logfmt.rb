@@ -38,5 +38,8 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
     end
     event.set(@target, params)
     true
+  rescue => e
+    @logger.error "Failed to parse data: #{data}"
+    @logger.error e
   end
 end # class LogStash::Filters::Logfmt
