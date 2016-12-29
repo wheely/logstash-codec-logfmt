@@ -45,6 +45,13 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
     event.set(@source, nil) if @remove_source
     return true
   rescue => e
+    log_exception(e)
+    nil
+  end
+
+  private
+
+  def log_exception(e)
     @logger.error({
       msg: 'Failed to parse logfmt string',
       error: {
@@ -54,10 +61,7 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
         stacktrace: (e.backtrace && e.backtrace.join(','))
       }.compact
     }.to_json)
-    return nil
   end
-
-  private
 
   def flat_keys_to_nested(hash)
     hash.each_with_object({}) do |(key,value), all|
