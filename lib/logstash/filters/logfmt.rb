@@ -72,11 +72,8 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
       leaf = key_parts[0...-1].inject(all) { |h, k| h[k] ||= {} }
       leaf[key_parts.last] = value
     end.each_with_object({}) do |(key,value), all|
-      if @conver_to_json.include?(key)
-        all[key] = value.to_json
-      else
-        all[key] = value
-      end
+      next all[key] = value.to_json if @conver_to_json.include?(key)
+      all[key] = value
     end
   end
 end # class LogStash::Filters::Logfmt

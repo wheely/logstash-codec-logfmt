@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name            = 'logstash-filter-logfmt'
-  s.version         = '0.1.9'
+  s.version         = '0.1.10'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = 'This filter may be used to decode Logfmt messages'
   s.description     = 'This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install logstash-filter-logfmt. This gem is not a stand-alone program'
