@@ -1,5 +1,5 @@
 if Logfmt::VERSION != '0.0.7'
-  puts 'Please remove this code of Logfmt gem if pr #9 is fixed'
+  puts 'Please remove this code if PR #9 is fixed'
 else
   # see https://github.com/cyberdelia/logfmt-ruby/pull/9
   module Logfmt
