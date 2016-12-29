@@ -2,6 +2,7 @@
 require 'logstash/filters/base'
 require 'logstash/namespace'
 require 'logfmt'
+require 'json'
 require_relative 'logfmt_patch'
 
 # Add any asciidoc formatted documentation here
@@ -44,8 +45,12 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
     event.set(@source, nil) if @remove_source
     true
   rescue => e
-    @logger.error "Failed to parse data: #{data}"
-    @logger.error e
+    @logger.error({
+      msg: e.message,
+      err: e.class.to_s,
+      data: data,
+      stacktrace: (e.backtrace && e.backtrace.join(','))
+    }.compact.to_json)
     false
   end
 
