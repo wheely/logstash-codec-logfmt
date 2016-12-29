@@ -15,7 +15,7 @@ describe LogStash::Filters::Logfmt do
       insist { event.is_a? LogStash::Event }
       insist { event.get('logfmt')['time'] } == '2016-12-27T16:15:00.108+00:00'
       insist { event.get('logfmt')['level'] } == 'error'
-      insist { event.get('logfmt')['response_status'] } == 401
+      insist { event.get('logfmt')['response_status'] } == '401'
       insist { event.get('logfmt')['response_body']['error'] } == 'Your user ID or license key could not be authenticated.'
       insist { event.get('logfmt')['stacktrace'].is_a? Array }
     end
@@ -24,7 +24,7 @@ describe LogStash::Filters::Logfmt do
       it 'should decode valid logfmt data' do
         insist { subject.resolve(event) } == true
         insist { event.is_a? LogStash::Event }
-        insist { event.get('logfmt')['thread'] } == 47144021941860
+        insist { event.get('logfmt')['thread'] } == '47144021941860'
       end
     end
     it 'should be fast', performance: true do

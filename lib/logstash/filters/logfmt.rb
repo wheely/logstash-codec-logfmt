@@ -43,15 +43,18 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
     end
     event.set(@target, flat_keys_to_nested(params))
     event.set(@source, nil) if @remove_source
-    true
+    return true
   rescue => e
     @logger.error({
-      msg: e.message,
-      err: e.class.to_s,
-      data: data,
-      stacktrace: (e.backtrace && e.backtrace.join(','))
-    }.compact.to_json)
-    false
+      msg: 'Failed to parse logfmt string',
+      error: {
+        message: e.message,
+        err: e.class.to_s,
+        data: data,
+        stacktrace: (e.backtrace && e.backtrace.join(','))
+      }.compact
+    }.to_json)
+    return nil
   end
 
   private
@@ -60,7 +63,7 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
     hash.each_with_object({}) do |(key,value), all|
       key_parts = key.split('.').map!(&:to_sym)
       leaf = key_parts[0...-1].inject(all) { |h, k| h[k] ||= {} }
-      leaf[key_parts.last] = value
+      leaf[key_parts.last] = value.to_s
     end
   end
 end # class LogStash::Filters::Logfmt
