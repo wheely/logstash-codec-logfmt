@@ -3,6 +3,12 @@ if Logfmt::VERSION != '0.0.7'
 else
   # see https://github.com/cyberdelia/logfmt-ruby/pull/9
   module Logfmt
+    GARBAGE = 0
+    KEY = 1
+    EQUAL = 2
+    IVALUE = 3
+    QVALUE = 4
+
     def self.numeric?(s)
       s.is_a?(Numeric) || s.to_s.match(/\A[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\Z/)
     end
@@ -62,7 +68,7 @@ else
           next
         end
         if state == IVALUE
-          if !(c > ' ' && c != '"' && c != '=')
+          if !(c > ' ' && c != '"')
             if integer?(value)
               value = value.to_i
             elsif numeric?(value)
@@ -86,7 +92,6 @@ else
         if state == QVALUE
           if c == '\\'
             escaped = true
-            value << '\\'
           elsif c == '"'
             if escaped
               escaped = false

@@ -18,6 +18,9 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
   # Remove source
   config :remove_source, validate: :boolean, default: false
 
+  # Convert fields to json
+  config :conver_to_json, validate: :array, default: []
+
   def register
     @logger.info 'Logfmt filter registered'
   end
@@ -41,17 +44,17 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
         params['stacktrace'] = params['stacktrace'].split(',')
       end
     end
-    event.set(@target, flat_keys_to_nested(params))
+    event.set(@target, process_hash(params))
     event.set(@source, nil) if @remove_source
     return true
   rescue => e
-    log_exception(e)
+    log_exception(e, data)
     nil
   end
 
   private
 
-  def log_exception(e)
+  def log_exception(e, data)
     @logger.error({
       msg: 'Failed to parse logfmt string',
       error: {
@@ -59,15 +62,21 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
         err: e.class.to_s,
         data: data,
         stacktrace: (e.backtrace && e.backtrace.join(','))
-      }.compact
+      }
     }.to_json)
   end
 
-  def flat_keys_to_nested(hash)
+  def process_hash(hash)
     hash.each_with_object({}) do |(key,value), all|
-      key_parts = key.split('.').map!(&:to_sym)
+      key_parts = key.split('.')
       leaf = key_parts[0...-1].inject(all) { |h, k| h[k] ||= {} }
-      leaf[key_parts.last] = value.to_s
+      leaf[key_parts.last] = value
+    end.each_with_object({}) do |(key,value), all|
+      if @conver_to_json.include?(key)
+        all[key] = value.to_json
+      else
+        all[key] = value
+      end
     end
   end
 end # class LogStash::Filters::Logfmt
