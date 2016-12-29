@@ -1,5 +1,5 @@
-# Logstash Plugin
-[![Build Status](https://travis-ci.org/grandcentrix/logstash-codec-logfmt.svg?branch=master)](https://travis-ci.org/grandcentrix/logstash-codec-logfmt)
+# Logstash Logfmt Parser Plugin
+[![Build Status](https://travis-ci.org/wheely/logstash-filter-logfmt.svg?branch=master)](https://travis-ci.org/wheely/logstash-filter-logfmt)
 
 
 This is a plugin for [Logstash](https://github.com/elasticsearch/logstash), allowing logstash to parse logfmt-formatted messages.
@@ -62,7 +62,7 @@ bundle exec rspec
 
 - Edit Logstash `tools/Gemfile` and add the local plugin path, for example:
 ```ruby
-gem "logstash-codec-logfmt", :path => "/your/local/logstash-codec-logfmt"
+gem "logstash-filter-logfmt", :path => "/your/local/logstash-filter-logfmt"
 ```
 - Update Logstash dependencies
 ```sh
@@ -70,7 +70,7 @@ rake vendor:gems
 ```
 - Run Logstash with your plugin
 ```sh
-bin/logstash -e 'filter {awesome {}}'
+bin/logstash -e 'filter {logfmt { source => "message" }}'
 ```
 At this point any modifications to the plugin code will be applied to this local Logstash setup. After modifying the plugin, simply rerun Logstash.
 
@@ -78,10 +78,10 @@ At this point any modifications to the plugin code will be applied to this local
 
 - Build your plugin gem
 ```sh
-gem build logstash-codec-logfmt.gemspec
+gem build logstash-filter-logfmt.gemspec
 ```
 - Install the plugin from the Logstash home
 ```sh
-bin/plugin install /your/local/plugin/logstash-codec-logfmt.gem
+bin/plugin install /your/local/plugin/logstash-filter-logfmt.gem
 ```
 - Start Logstash and proceed to test the plugin
