@@ -16,8 +16,16 @@ describe LogStash::Filters::Logfmt do
       insist { event.get('logfmt')['time'] } == '2016-12-27T16:15:00.108+00:00'
       insist { event.get('logfmt')['level'] } == 'error'
       insist { event.get('logfmt')['response_status'] } == 401
-      insist { event.get('logfmt')['response_body.error'] } == 'Your user ID or license key could not be authenticated.'
+      insist { event.get('logfmt')['response_body']['error'] } == 'Your user ID or license key could not be authenticated.'
       insist { event.get('logfmt')['stacktrace'].is_a? Array }
+    end
+    context 'logfmt-ruby issue #9' do
+      let(:data) { 'level=error msg="Failed to confirm push notification" logger=Notifications params="{\"token\":\"3c201500-d6e7-4185-a814-9701db7bb0fa\",\"device_id\":\"52C929B2-F5A6-475D-82C5-A54815CBD5BA\"}" thread=47144021941860' }
+      it 'should decode valid logfmt data' do
+        insist { subject.resolve(event) } == true
+        insist { event.is_a? LogStash::Event }
+        insist { event.get('logfmt')['thread'] } == 47144021941860
+      end
     end
     it 'should be fast', performance: true do
       iterations = 5_000
