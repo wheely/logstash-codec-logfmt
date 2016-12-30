@@ -19,7 +19,10 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
   config :remove_source, validate: :boolean, default: false
 
   # Convert fields to json
-  config :conver_to_json, validate: :array, default: []
+  config :convert_to_json, validate: :array, default: []
+
+  # Convert fields to strings
+  config :convert_to_string, validate: :array, default: []
 
   def register
     @logger.info 'Logfmt filter registered'
@@ -72,7 +75,8 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
       leaf = key_parts[0...-1].inject(all) { |h, k| h[k] ||= {} }
       leaf[key_parts.last] = value
     end.each_with_object({}) do |(key,value), all|
-      next all[key] = value.to_json if @conver_to_json.include?(key)
+      next all[key] = value.to_json if @convert_to_json.include?(key)
+      next all[key] = value.to_s if @convert_to_string.include?(key)
       all[key] = value
     end
   end
