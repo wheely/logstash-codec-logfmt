@@ -1,3 +1,4 @@
+language: ruby
 rvm:
-  - jruby
+  - jruby-1.9
 script: bundle exec rspec
