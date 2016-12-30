@@ -1,8 +1,14 @@
-language: ruby
-rvm:
-  - jruby-19mode
-  - jruby-head
+sudo: false
 jdk:
   - openjdk7
   - oraclejdk7
-script: bundle exec rspec
+  - oraclejdk8
+language: ruby
+cache: bundler
+rvm:
+  - jruby-1.7.25
+  - jruby-19mode
+  - jruby-head
+before_install: []
+script:
+  - bundle exec rspec spec
