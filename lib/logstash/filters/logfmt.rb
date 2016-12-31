@@ -3,7 +3,6 @@ require 'logstash/filters/base'
 require 'logstash/namespace'
 require 'logfmt'
 require 'json'
-require_relative 'logfmt_patch'
 
 # Add any asciidoc formatted documentation here
 class LogStash::Filters::Logfmt < LogStash::Filters::Base
