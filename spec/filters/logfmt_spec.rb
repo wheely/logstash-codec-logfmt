@@ -25,7 +25,7 @@ describe LogStash::Filters::Logfmt do
       insist { event.get('logfmt')['response_status'] } == 401
       insist { event.get('logfmt')['status'] } == '200'
       insist { event.get('logfmt')['response_body']['error'] } == 'Your user ID or license key could not be authenticated.'
-      insist { event.get('logfmt')['stacktrace'].is_a? Array }
+      insist { event.get('logfmt')['stacktrace'].is_a? String }
     end
     context 'equal in valie' do
       let(:data) { %(time=2016-12-29T12:43:31.029+00:00 level=info method=GET path=/v6/services query=position=55.80450799126121%2C37.58320759981871&selected_service_id=4feb17260c3dba1929000001 status=200 len=0 addr=194.186.99.94 duration=0.050610643 progname=null logger=Rack::Wheely::Logger) }
@@ -53,6 +53,14 @@ describe LogStash::Filters::Logfmt do
         insist { subject.resolve(event) } == true
         insist { event.is_a? LogStash::Event }
         insist { event.get('logfmt')['thread'] } == 47144021941860
+      end
+    end
+    context 'logfmt-ruby check null stacktrace in params' do
+      let(:data) { 'time="2019-05-08T06:39:19.042Z" level=warning msg=PanicWithIP err="panic: write tcp IP:PORT->IP:PORT: write: broken pipe" from="172.17.0.8:8080" logger=RecoverPanic stacktrace= to="172.17.0.1:38630"' }
+      it 'should decode valid logfmt data' do
+        insist { subject.resolve(event) } == true
+        insist { event.is_a? LogStash::Event }
+        insist { event.get('logfmt')['stacktrace'] }.nil? == true
       end
     end
     context 'conver_to_json' do
