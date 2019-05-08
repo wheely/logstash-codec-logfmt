@@ -1,4 +1,3 @@
-# encoding: utf-8
 require 'logstash/filters/base'
 require 'logstash/namespace'
 require 'logfmt'
@@ -38,14 +37,10 @@ class LogStash::Filters::Logfmt < LogStash::Filters::Base
 
     # log line should at least have level
     return if !params['level'].is_a?(String) || params['level'].empty?
-
-    if params['stacktrace']
-      if params['stacktrace'].start_with?('[')
-        params['stacktrace'] = params['stacktrace'][1..-2].split('][')
-      else
-        params['stacktrace'] = params['stacktrace'].split(',')
-      end
+    for k,v in params do
+      params.delete(k) if v == true 
     end
+
     event.set(@target, process_hash(params))
     event.set(@source, nil) if @remove_source
     return true
